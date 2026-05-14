@@ -1,7 +1,7 @@
 # Tiny Tapeout project information
 project:
-  title:        "Daniel Barrios"      # Project title
-  author:       "Simple PWM Generator"      # Your name
+  title:        "Onchip-UIS PWM Generator "      # Project title
+  author:       "Daniel Barrios"      # Your name
   discord:      "zhord0326"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Generates a PWM signal with a duty cycle that can be varied with inputs pins"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
