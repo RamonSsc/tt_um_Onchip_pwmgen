@@ -16,9 +16,9 @@ module tt_um_db_PWM(
 
     reg [7:0] cnt;
     wire [7:0] duty;
-    reg pwm_q,ppm_q;
+    reg pwm_q;
     reg [2:0] bits_pre;
-    wire pwm_d,ppm_d;
+    wire pwm_d;
 
     assign duty = ui_in [7:0];
     assign bits = uio_in[2:0];
