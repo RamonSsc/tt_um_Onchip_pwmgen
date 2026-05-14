@@ -1,40 +1,51 @@
-# SPDX-FileCopyrightText: © 2024 Tiny Tapeout
-# SPDX-License-Identifier: Apache-2.0
-
 import cocotb
-from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
+import struct
 
+from cocotb.clock import Clock
+from cocotb.triggers import ClockCycles, RisingEdge, FallingEdge
 
 @cocotb.test()
-async def test_project(dut):
-    dut._log.info("Start")
-
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, unit="us")
+async def test_PWM(dut):
+    dut._log.info("start")
+    clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
-    dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
+    # Apply reset
+    dut._log.info("Start")
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    dut.uio_in.value = 0b011
+    dut.ui_in.value = 0b00000000
+
+    await ClockCycles(dut.clk, 2)
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    # Test cases
+    for bits_value in [0b011, 0b100, 0b111, 0b010, 0b000]:
+        dut._log.info("25 Duty")
+        dut.uio_in.value = bits_value
+        #pad = binary_rep.zfill(len(dut.ui_in))
+        btf = float(bits_value)
+        ftn = int(0.5*(2**bits_value))
+        
+        dut.ui_in.value = ftn
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+        await ClockCycles(dut.clk, 400)  # Wait for some cycles
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+        dut._log.info("50 Duty")
+        btf = float(bits_value)
+        ftn = int(0.5*(2**bits_value))
+        
+        dut.ui_in.value = ftn
+        await ClockCycles(dut.clk, 400)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+        dut._log.info("75 Duty")
+        btf = float(bits_value)
+        ftn = int(0.5*(2**bits_value))
+        
+        dut.ui_in.value = ftn
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+        await ClockCycles(dut.clk, 400)
+
+    # Wait for the simulation to complete
+    await ClockCycles(dut.clk, 400)
+    cocotb.log.info("Simulation complete")
