@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+//`timescale 1ns / 1ps
 
 module tt_um_db_PWM(
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
@@ -56,7 +56,8 @@ module tt_um_db_PWM(
     assign pwm_d = (cnt < duty);
     assign uo_out[0] = pwm_q;
     
-
+    // List all unused inputs to prevent warnings
+    wire _unused = &{ena, uio_in[7:3], 1'b0};
 
 endmodule
 
